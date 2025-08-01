@@ -1,31 +1,47 @@
 import { useEffect, useState } from "react";
 import api from "../api";
 import { Link } from "react-router-dom";
+import SearchBar from "../components/SearchBar";
 
 function Companies() {
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchCompanies = async () => {
-      try {
-        const res = await api.get("/companies");
-        console.log("Companies API:", res.data);
-        setCompanies(res.data.data || []);
-      } catch (err) {
-        console.error("Error fetching companies:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchCompanies();
   }, []);
+
+  const fetchCompanies = async () => {
+    try {
+      const res = await api.get("/companies");
+      console.log("Companies API:", res.data);
+      setCompanies(res.data.data || []);
+    } catch (err) {
+      console.error("Error fetching companies:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearchCompanies = async (query, type) => {
+  try {
+    let url = "/companies";
+    if (type === "companies") url = `/companies?search=${query}`;
+    if (type === "location") url = `/companies?location=${query}`;
+    const res = await api.get(url);
+    setCompanies(res.data.data || []);
+  } catch (err) {
+    console.error("Error searching companies:", err);
+  }
+};
+
 
   if (loading) return <p className="text-center mt-4">Loading...</p>;
 
   return (
     <div className="container my-4">
       <h2 className="mb-4 text-center">Companies</h2>
+      <SearchBar placeholder="Search companies..." onSearch={handleSearchCompanies} />
       {companies.length > 0 ? (
         <div className="row">
           {companies.map((company) => (

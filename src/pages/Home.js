@@ -1,28 +1,44 @@
 import { useEffect, useState } from "react";
 import api from "../api";
 import JobCard from "../components/JobCard";
+import SearchBar from "../components/SearchBar";
 
 function Home() {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        const res = await api.get("/jobs");
-        setJobs(res.data.jobs || []);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchJobs();
   }, []);
 
+  const fetchJobs = async () => {
+    try {
+      const res = await api.get("/jobs");
+      setJobs(res.data.jobs || []);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearchJobs = async (query, type) => {
+  try {
+    let url = "/jobs";
+    if (type === "jobs") url = `/jobs?search=${query}`;
+    if (type === "location") url = `/jobs?location=${query}`;
+    const res = await api.get(url);
+    setJobs(res.data.jobs || []);
+  } catch (err) {
+    console.error("Error searching jobs:", err);
+  }
+};
+
+
   return (
     <div className="container my-5">
-      <h2 className="fw-bold mb-4 text-primary-custom">Latest Jobs</h2>
+      <h2 className="fw-bold mb-4 text-primary-custom text-center">Latest Jobs</h2>
+      <SearchBar placeholder="Search jobs (e.g., React, Java)..." onSearch={handleSearchJobs} />
       {loading ? (
         <p>Loading jobs...</p>
       ) : (
