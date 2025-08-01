@@ -1,14 +1,20 @@
-import React from "react";
-import { Link } from "react-router-dom";
-
 function JobCard({ job }) {
   return (
-    <div className="border p-4 rounded-lg shadow hover:shadow-lg transition duration-300 bg-white">
-      <Link to={`/jobs/${job._id}`} className="text-xl font-semibold text-red-600 hover:underline">
-        {job.title}
-      </Link>
-      <p className="text-gray-700 mt-2">{job.companyName}</p>
-      <p className="text-gray-500 text-sm mt-1">{job.description}</p>
+    <div className="col-md-4 mb-4">
+      <div className="card shadow-sm h-100">
+        <div className="card-body">
+          <h5 className="card-title text-primary-custom">{job.title}</h5>
+          <h6 className="card-subtitle mb-2 text-muted">{job.jobTitle}</h6>
+          <p className="card-text">
+            📍 {job.address?.city || "Unknown City"} • {job.employmentType}
+          </p>
+          <p>{job.description || "No description available."}</p>
+          <p className="fw-bold text-dark">
+            💰 {job.salaryMin || 0} - {job.salaryMax || 0} USD
+          </p>
+          <button className="btn btn-custom w-100">Apply Now</button>
+        </div>
+      </div>
     </div>
   );
 }

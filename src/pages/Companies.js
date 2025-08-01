@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import api from "../api";
+import { Link } from "react-router-dom";
 
 function Companies() {
   const [companies, setCompanies] = useState([]);
@@ -10,19 +10,10 @@ function Companies() {
     const fetchCompanies = async () => {
       try {
         const res = await api.get("/companies");
-        console.log("API Companies:", res.data); // Log để kiểm tra dữ liệu trả về
-
-        // Kiểm tra dữ liệu trả về có phải array không
-        if (Array.isArray(res.data)) {
-          setCompanies(res.data);
-        } else if (Array.isArray(res.data.data)) {
-          setCompanies(res.data.data); // Một số API trả về { status, data: [] }
-        } else {
-          setCompanies([]); // Nếu không phải array, gán mảng rỗng
-        }
+        console.log("Companies API:", res.data);
+        setCompanies(res.data.data || []);
       } catch (err) {
-        console.error("Lỗi khi lấy danh sách công ty:", err);
-        setCompanies([]);
+        console.error("Error fetching companies:", err);
       } finally {
         setLoading(false);
       }
@@ -30,28 +21,44 @@ function Companies() {
     fetchCompanies();
   }, []);
 
-  if (loading) return <p className="p-6 text-center">Đang tải danh sách công ty...</p>;
+  if (loading) return <p className="text-center mt-4">Loading...</p>;
 
   return (
-    <div className="container mx-auto px-4 py-6">
-      <h2 className="text-2xl font-bold mb-6">Danh sách công ty</h2>
-      {companies.length === 0 ? (
-        <p className="text-center text-gray-500">Không có công ty nào.</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="container my-4">
+      <h2 className="mb-4 text-center">Companies</h2>
+      {companies.length > 0 ? (
+        <div className="row">
           {companies.map((company) => (
-            <div key={company._id} className="border rounded-lg p-4 shadow hover:shadow-lg">
-              <h3 className="text-xl font-semibold">{company.name}</h3>
-              <p className="text-gray-600">{company.address?.city || "Chưa cập nhật địa chỉ"}</p>
-              <Link
-                to={`/companies/${company._id}`}
-                className="mt-3 inline-block text-red-600 hover:underline"
+            <div key={company._id} className="col-md-4 mb-4">
+              <div
+                className="card shadow-sm h-100 text-center p-3 text-white"
+                style={{ background: "linear-gradient(135deg, #91C8E4, #749BC2, #4682A9)" }}
               >
-                Xem chi tiết
-              </Link>
+                <div className="card-body">
+                  <h5 className="card-title fw-bold">{company.name}</h5>
+                  <p className="mb-1">
+                    📍 {company.address?.city || "N/A"},{" "}
+                    {company.address?.country || ""}
+                  </p>
+                  <p className="mb-1">
+                    👥 {company.size ? `${company.size} employees` : "Size: N/A"}
+                  </p>
+                  <p className="small">
+                    {company.description || "No description available."}
+                  </p>
+                  <Link
+                    to={`/companies/${company._id}`}
+                    className="btn btn-light mt-3 w-100 fw-bold"
+                  >
+                    View Details
+                  </Link>
+                </div>
+              </div>
             </div>
           ))}
         </div>
+      ) : (
+        <p className="text-center text-muted">No companies found.</p>
       )}
     </div>
   );

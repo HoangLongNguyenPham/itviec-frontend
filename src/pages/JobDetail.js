@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../api";
 
@@ -7,16 +7,30 @@ function JobDetail() {
   const [job, setJob] = useState(null);
 
   useEffect(() => {
-    api.get(`/jobs/${id}`).then((res) => setJob(res.data));
+    const fetchJob = async () => {
+      try {
+        const res = await api.get(`/jobs/${id}`);
+        setJob(res.data.job);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchJob();
   }, [id]);
 
-  if (!job) return <p className="text-center mt-10">Loading...</p>;
+  if (!job) return <p className="container my-5">Loading job details...</p>;
 
   return (
-    <div className="container mx-auto p-6">
-      <h2 className="text-3xl font-bold text-red-600">{job.title}</h2>
-      <h3 className="text-xl mt-2">{job.companyName}</h3>
-      <p className="mt-4">{job.description}</p>
+    <div className="container my-5">
+      <div className="card shadow-sm p-4">
+        <h2 className="text-primary-custom">{job.title}</h2>
+        <p className="text-muted">
+          📍 {job.address?.city}, {job.address?.country} • {job.employmentType}
+        </p>
+        <p>{job.description}</p>
+        <p className="fw-bold">💰 Salary: {job.salaryMin} - {job.salaryMax} USD</p>
+        <button className="btn btn-custom">Apply Now</button>
+      </div>
     </div>
   );
 }
