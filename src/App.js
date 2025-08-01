@@ -1,23 +1,25 @@
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Header from "./components/Header";
+import Companies from "./pages/Companies";
+import CompanyDetail from "./pages/CompanyDetail";
 import Home from "./pages/Home";
 import JobDetail from "./pages/JobDetail";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+
 function App() {
   return (
     <Router>
       <Header />
-      <main className="container mx-auto px-4 py-6">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/jobs/:id" element={<JobDetail />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/companies" element={<Companies />} />
+        <Route path="/companies/:id" element={<CompanyDetail />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
-      </main>
     </Router>
-    
   );
 }
 

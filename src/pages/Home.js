@@ -9,7 +9,7 @@ function Home() {
     api.get("/jobs")
       .then((res) => {
         console.log("API Data:", res.data);
-        setJobs(res.data.jobs || []); // ✅ đảm bảo luôn là mảng
+        setJobs(res.data.jobs || []); 
       })
       .catch((err) => {
         console.error("API Error:", err);
